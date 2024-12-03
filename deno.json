@@ -21,13 +21,14 @@
     "./text-encoder-stream": "./src/text_encoder_stream.ts"
   },
   "tasks": {
-    "test": "deno test -A --no-check=remote --parallel --doc",
-    "ok": "deno fmt && deno lint --fix && deno run test"
+    "test": "deno test -A --no-check=remote --parallel",
+    "fix": "deno fmt && deno lint --fix",
+    "ok": "deno fmt --check && deno lint && deno run test"
   },
   "lock": false,
   "nodeModulesDir": "auto",
   "publish": {
-    "include": ["*.{md,ts,json}", "src/*.ts", "LICENSE"],
-    "exclude": ["**/*.{test,spec,bench}.*"]
+    "include": ["./mod.ts", "README.md", "LICENSE", "deno.json", "./src/*.ts"],
+    "exclude": ["**/*.{test,bench}.*"]
   }
 }
