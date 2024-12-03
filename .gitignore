@@ -1,0 +1,7 @@
+*.lock
+node_modules
+.DS_Store
+.SpotlightV100
+Thumbs.db
+*.env
+*.env*

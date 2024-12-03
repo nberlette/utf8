@@ -1,0 +1,33 @@
+{
+  "name": "@nick/utf8",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": {
+    "name": "Nicholas Berlette",
+    "email": "nick@berlette.com",
+    "url": "https://berlette.com"
+  },
+  "description": "Blazing fast universal ponyfills for TextEncoder and TextDecoder.",
+  "exports": {
+    ".": "./mod.ts",
+    "./encoder": "./src/text_encoder.ts",
+    "./decoder": "./src/text_decoder.ts",
+    "./streams": "./src/streams.ts",
+    "./text-decoder": "./src/text_decoder.ts",
+    "./text-decoder/stream": "./src/text_decoder_stream.ts",
+    "./text-decoder-stream": "./src/text_decoder_stream.ts",
+    "./text-encoder": "./src/text_encoder.ts",
+    "./text-encoder/stream": "./src/text_encoder_stream.ts",
+    "./text-encoder-stream": "./src/text_encoder_stream.ts"
+  },
+  "tasks": {
+    "test": "deno test -A --no-check=remote --parallel --doc",
+    "ok": "deno fmt && deno lint --fix && deno run test"
+  },
+  "lock": false,
+  "nodeModulesDir": "auto",
+  "publish": {
+    "include": ["*.{md,ts,json}", "src/*.ts", "LICENSE"],
+    "exclude": ["**/*.{test,spec,bench}.*"]
+  }
+}
