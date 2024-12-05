@@ -1,3 +1,17 @@
+/**
+ * This module provides a streaming text decoder implementation, as a ponyfill
+ * for the native `TextDecoderStream` Web API.
+ *
+ * Under the hood, it uses the `TextDecoder` ponyfill from this package to
+ * decode UTF-8 bytes into strings, and the native `TransformStream` API to
+ * handle the streaming process. It requires the `TransformStream` API to be
+ * available in the current environment.
+ *
+ * **Note**: This was directly adapted from the Deno `TextDecoderStream`
+ * implementation (MIT License), which is based on the WHATWG Streams standard.
+ *
+ * @module text-decoder-stream
+ */
 import { PromiseReject, PromiseResolve, TransformStream } from "./_internal.ts";
 import { TextDecoder, type TextDecoderOptions } from "./text_decoder.ts";
 

@@ -1,4 +1,14 @@
 /**
+ * This module provides a streaming encoder for UTF-8 text, which is based on
+ * the `TextEncoder` API.
+ *
+ * This is a zero-dependency ponyfill for the native `TextEncoderStream` Web
+ * API, which can be used in any ES2015+ environment with support for the
+ * `TransformStream` API.
+ *
+ * **Note**: This was directly adapted from the Deno `TextEncoderStream`
+ * implementation (MIT License), which is based on the WHATWG Streams standard.
+ *
  * @module text-encoder-stream
  */
 import { TransformStream } from "./_internal.ts";
