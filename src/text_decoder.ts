@@ -37,7 +37,7 @@ export interface TextDecoderOptions {
 }
 
 /** Options for the {@linkcode TextDecoder.decode} method. */
-export interface TextDecoderDecodeOptions {
+export interface TextDecodeOptions {
   /**
    * If true, indicates that the data being decoded is part of a larger stream.
    * This allows the decoder to handle incomplete byte sequences appropriately.
@@ -100,7 +100,7 @@ export class TextDecoder {
    * @throws if the input is not a BufferSource.
    * @throws if fatal is true and an invalid byte sequence is encountered.
    */
-  decode(input?: BufferSource, options?: TextDecoderDecodeOptions): string {
+  decode(input?: BufferSource, options?: TextDecodeOptions): string {
     const stream = options?.stream ?? false;
     let bytes = toUint8Array(input);
 

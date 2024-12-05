@@ -127,7 +127,7 @@ const { read, written } = encoder.encodeInto(input, output);
 
 The `TextDecoder` class decodes UTF-8 byte sequences into strings.
 
-#### `decode(input?: BufferSource, options?: TextDecoderDecodeOptions)`
+#### `decode(input?: BufferSource, options?: TextDecodeOptions)`
 
 Decodes UTF-8 bytes from the given `BufferSource` into a string.
 
