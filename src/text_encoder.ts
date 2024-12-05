@@ -1,3 +1,10 @@
+/**
+ * This module provides a high performance dependency-free ponyfill for the
+ * native `TextEncoder` Web API, allowing you to encode strings into UTF-8
+ * encoded `Uint8Array` buffers in any ES2015+ environment.
+ *
+ * @module text-encoder
+ */
 import {
   getCodePoint,
   Uint8Array,
