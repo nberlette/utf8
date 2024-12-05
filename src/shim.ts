@@ -57,7 +57,9 @@ const globalObject: typeof globalThis = (() => {
   if (typeof window !== "undefined") return window;
   if (typeof root !== "undefined") return root;
   if (typeof this !== "undefined") return this;
-  try { return (0, eval)("this") } catch (_) { /* ignore */ }
+  try {
+    return (0, eval)("this");
+  } catch (_) { /* ignore */ }
   throw new Error("Unable to locate global object");
 })();
 
