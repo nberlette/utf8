@@ -1,3 +1,14 @@
+/**
+ * This module provides a high performance dependency-free ponyfill for the
+ * `TextDecoder` Web API, allowing you to decode UTF-8 encoded `BufferSource`
+ * buffers into strings in any ES2015+ environment.
+ *
+ * Currently only UTF-8 encoding is supported, but additional encodings will be
+ * added in the near future. Encodings that are currently being implemented are
+ * UTF-16, ISO-8859-1, Windows-1252, and ASCII.
+ *
+ * @module text-decoder
+ */
 import {
   normalizeEncoding,
   StringFromCharCode,
