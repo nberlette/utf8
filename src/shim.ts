@@ -50,7 +50,7 @@ const $globalThis = $global as typeof globalThis & {
   TextDecoder?: typeof TextDecoder;
   TextEncoderStream?: typeof TextEncoderStream;
   TextDecoderStream?: typeof TextDecoderStream;
-  TransformStream?: unknown;
+  TransformStream?: typeof TransformStream;
 }
 
 gracefulDefine($globalThis, "TextEncoder", TextEncoder);
