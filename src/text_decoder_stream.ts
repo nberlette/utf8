@@ -13,7 +13,11 @@
  * @module text-decoder-stream
  */
 import { PromiseReject, PromiseResolve, TransformStream } from "./_internal.ts";
-import { TextDecoder, type TextDecoderOptions } from "./text_decoder.ts";
+import {
+  type BufferSource,
+  TextDecoder,
+  type TextDecoderOptions,
+} from "./text_decoder.ts";
 
 /**
  * Zero-dependency ponyfill for the native `TextDecoderStream` Web API.
