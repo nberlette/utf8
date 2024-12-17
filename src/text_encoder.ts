@@ -25,7 +25,9 @@ export interface TextEncoderEncodeIntoResult {
 }
 
 /**
- * Zero-dependency ponyfill for the native `TextEncoder` Web API.
+ * Encode strings into binary data (in the form of a `Uint8Array`) using the
+ * UTF-8 encoding standard. This is a high performance ponyfill for the native
+ * `TextEncoder` class.
  *
  * @category Encoding
  * @tags utf-8, encoder

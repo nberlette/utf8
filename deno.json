@@ -13,6 +13,7 @@
     "./encoder": "./src/text_encoder.ts",
     "./decoder": "./src/text_decoder.ts",
     "./shim": "./src/shim.ts",
+    "./shim.d.ts": "./src/shim.d.ts",
     "./streams": "./src/streams.ts",
     "./text-decoder": "./src/text_decoder.ts",
     "./text-decoder/stream": "./src/text_decoder_stream.ts",

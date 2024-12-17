@@ -2,22 +2,24 @@
 
 # [`@nick/utf8`]
 
-##### Blazing fast ponyfills for `TextEncoder`, `TextDecoder`, and more.
+##### Blazing fast [ponyfills] for `TextEncoder`, `TextDecoder`, and more.
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nberlette/utf8/ci.yml?style=flat-square)
+![GitHub package.json version](https://img.shields.io/npm/v/nberlette/utf8?style=flat-square)
 
 </div>
 
----
-
 ## Overview
 
-This package provides a set of high performance [ponyfill]s for `TextEncoder`
-and `TextDecoder`. They're dependency-free and platform-agnostic, suitable for
-use in any ES2015+ environment.
+This package provides dependency-free TypeScript implementations of the native
+text encoding classes, designed as [ponyfills] for the following standard APIs.
 
-- [`TextEncoder`](#textencoder)
-- [`TextDecoder`](#textdecoder)
-- [`TextEncoderStream`](#textencoderstream)[^1]
-- [`TextDecoderStream`](#textdecoderstream)[^1]
+| API                                           | Description                                | Notes                           |
+| --------------------------------------------- | ------------------------------------------ | ------------------------------- |
+| [`TextEncoder`](#textencoder)                 | Encodes strings into UTF-8 byte sequences. | `--`                            |
+| [`TextDecoder`](#textdecoder)                 | Decodes UTF-8 byte sequences into strings. | Currently only supports UTF-8.  |
+| [`TextEncoderStream`](#textencoderstream-mdn) | Full-duplex text-to-bytes encoding stream. | Requires `TransformStream` API. |
+| [`TextDecoderStream`](#textdecoderstream-mdn) | Full-duplex bytes-to-text decoding stream. | Requires `TransformStream` API. |
 
 [^1]: Requires the `TransformStream` API to be available in the environment.
 
@@ -31,7 +33,7 @@ use in any ES2015+ environment.
 </picture>
 
 ```sh
-deno add @nick/utf8
+deno add jsr:@nick/utf8
 ```
 
 <img align="left" src="https://api.iconify.design/simple-icons:jsr.svg?color=%23fc0" alt="JSR" width="32" height="48" />
@@ -86,17 +88,43 @@ console.log(decoded); // Hello, World!
 
 ---
 
-## API
-
-### `TextEncoder`
+## `TextEncoder`
 
 The `TextEncoder` class encodes strings into UTF-8 byte sequences.
 
-#### `encode(input?: string)`
+### `constructor`
+
+Creates a new `TextEncoder` instance.
+
+#### Signature
+
+```ts ignore
+new TextEncoder();
+```
+
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+
+<a id="textencoder.encode"></a>
+
+### `encode` <sup><small>[📚 MDN][textencoderencode-mdn]</small></sup>
 
 Encodes the given `input` into a new `Uint8Array`.
 
-**Returns**: a new `Uint8Array` containing the encoded bytes.
+#### Signature
+
+```ts ignore
+encode(input: string): Uint8Array;
+```
+
+##### Parameters
+
+- `input`: The string to encode.
+
+##### Returns
+
+A new `Uint8Array` containing the encoded bytes.
+
+#### Example
 
 ```ts
 import { TextEncoder } from "@nick/utf8";
@@ -106,11 +134,38 @@ const encoded = encoder.encode("Hello, World!");
 console.log(encoded); // Uint8Array([...])
 ```
 
-#### `encodeInto(input: string, output: Uint8Array)`
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+
+<a id="textencoder.encodeinto"></a>
+
+### `encodeInto` <sup><small>[📚 MDN][textencoderencodeinto-mdn]</small></sup>
 
 Encodes an `input` string into an existing `Uint8Array` output buffer.
 
-**Returns**: the number of characters read and bytes written.
+#### Signature
+
+```ts ignore
+encodeInto(input: string, output: Uint8Array): TextEncoderEncodeIntoResult;
+```
+
+##### Parameters
+
+- `input`: The string to encode.
+- `output`: The output buffer to write the encoded bytes into.
+
+##### Returns
+
+A [`TextEncoderEncodeIntoResult`] object, containing the number of characters
+read and number of bytes written.
+
+> [!NOTE]
+>
+> Refer to the [MDN documentation][textencoderencodeinto-mdn] for more
+> information.
+
+[`TextEncoderEncodeIntoResult`]: ./#textencoderencodeintoresult--mdn
+
+#### Example
 
 ```ts
 import { TextEncoder } from "@nick/utf8";
@@ -121,15 +176,50 @@ const input = "Hello, my name is Nick!"; // 23 characters
 const { read, written } = encoder.encodeInto(input, output);
 ```
 
+---
+
+## `TextDecoder`
+
+The `TextDecoder` class decodes encoded byte sequences into strings.
+
+### `constructor`
+
+Creates a new `TextDecoder` instance with the given `encoding` and `options`.
+
+#### Signature
+
+```ts ignore
+new TextDecoder(encoding?: string, options?: TextDecoderOptions)
+```
+
+- `encoding`: The encoding to use. Currently, only `"utf-8"` is supported.
+- `options`: An optional [`TextDecoderOptions`](#textdecoderoptions) object.
+
 <br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
 
-### `TextDecoder`
-
-The `TextDecoder` class decodes UTF-8 byte sequences into strings.
-
-#### `decode(input?: BufferSource, options?: TextDecodeOptions)`
+### `decode` <sup><small>[📚 MDN][textdecoderdecode-mdn]</small></sup>
 
 Decodes UTF-8 bytes from the given `BufferSource` into a string.
+
+#### Signature
+
+```ts ignore
+decode(input?: BufferSource, options?: TextDecodeOptions): string;
+```
+
+##### Parameters
+
+- `input`: The `BufferSource` containing the UTF-8 bytes to decode. If omitted,
+  defaults to an empty `Uint8Array`.
+- `options`: An optional [`TextDecodeOptions`](#textdecodeoptions) object.
+
+##### Returns
+
+The decoded bytes as a string.
+
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+
+#### Example
 
 ```ts
 import { TextDecoder } from "@nick/utf8";
@@ -140,87 +230,274 @@ const decoded = decoder.decode(encoded);
 console.log(decoded); // Hello!
 ```
 
-<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+---
 
-### `TextEncoderStream`
+## `TextDecoderStream`
 
-Provides a full-duplex UTF-8 encoding stream, allowing strings to be written to
-its writable side, and the encoded bytes to be read from its readable side.
+Provides a full-duplex decoding stream, allowing UTF-8 bytes to be written to
+its writable side, and the decoded strings to be read from its readable side.
 
-> **Note**: Requires `TransformStream` to be available in the environment.
+### `constructor`
 
-#### Usage
+Creates a new `TextDecoderStream` instance with an optional `encoding` standard
+and `options` to configure the underlying `TextDecoder` instance.
+
+#### Signature
 
 ```ts ignore
-import { TextEncoderStream } from "@nick/utf8";
-
-const chunks = ["Hello", ", ", "World!", "\n"];
-
-// encode the strings and write them to stdout
-await ReadableStream
-  .from(chunks)
-  .pipeThrough(new TextEncoderStream())
-  .pipeTo(Deno.stdout.writable, { preventClose: true });
+new TextDecoderStream(encoding?: string, options?: TextDecoderOptions)
 ```
 
-#### Properties
+This class supports the same arguments as the `TextDecoder` API, which it uses
+under the hood to perform the decoding. The `fatal` and `ignoreBOM` options,
+just like in the `TextDecoder` class, go on to become read-only properties of
+the same name on the new `TextDecoderStream` instance.
 
-##### `encoding: string`
+##### Parameters
 
-The encoding used. Always `"utf-8"`.
-
-##### `readable: ReadableStream<Uint8Array>`
-
-Returns a readable stream of encoded UTF-8 bytes.
-
-##### `writable: WritableStream<string>`
-
-Returns a writable stream, to which strings can be written for encoding.
+- `encoding`: The encoding to use. Currently, only `"utf-8"` is supported.
+- `options`: An optional [`TextDecoderOptions`](#textdecoderoptions) object.
 
 <br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
 
-### `TextDecoderStream`
+### Properties
 
-Provides a full-duplex UTF-8 decoding stream, allowing UTF-8 bytes to be written
-to its writable side, and the decoded strings to be read from its readable side.
+#### `encoding: string` <sup>[📚 MDN][textdecoderstreamencoding-mdn]</sup>
 
-Just like the [`TextDecoder`](#textdecoder) API, this class supports any type of
-`BufferSource` containing UTF-8 bytes, such as `Uint8Array`, `DataView`,
-`ArrayBuffer`, and more. It also supports the same `fatal` and `ignoreBOM`
-decoding options, which can be passed to the constructor.
+The encoding used by the underlying decoder. Represents the value passed to the
+constructor as the `encoding` parameter.
 
-> **Note**: Requires `TransformStream` to be available in the environment.
+#### `fatal: boolean` <sup>[📚 MDN][textdecoderstreamfatal-mdn]</sup>
 
-#### Usage
+Whether to throw an error if the input contains invalid bytes. Represents the
+value passed to the constructor as the `fatal` option.
 
-```ts
-import { TextDecoderStream } from "@nick/utf8";
+#### `ignoreBOM: boolean` <sup>[📚 MDN][textdecoderstreamignorebom-mdn]</sup>
 
-const decoderStream = new TextDecoderStream();
+Whether to ignore a leading BOM character in the input. Represents the value
+passed to the constructor as the `ignoreBOM` option.
 
-const writer = decoderStream.writable.getWriter();
-writer.write(new Uint8Array([72, 101, 108, 108, 111]));
-writer.close();
+#### `readable: ReadableStream<string>` <sup>[📚 MDN][textdecoderstreamreadable-mdn]</sup>
 
-const reader = decoderStream.readable.getReader();
-reader.read().then(({ value, done }) => {
-  console.log(value); // Hello
-});
+The _output_ side of the duplex stream, from which decoded strings are read.
+
+#### `writable: WritableStream<BufferSource>` <sup>[📚 MDN][textdecoderstreamwritable-mdn]</sup>
+
+The _input_ side of the duplex, into which `BufferSource` objects are written.
+
+Just like the [`TextDecoder`](#textdecoder) API, the `writable` stream supports
+any type of `BufferSource` object (an `ArrayBuffer` or a view of one) as input.
+
+<br>
+
+> [!IMPORTANT]
+>
+> `TextDecoderStream` requires runtime support for [`TransformStream`].
+
+---
+
+## `TextEncoderStream`
+
+Provides a full-duplex encoding stream, allowing strings to be written to its
+writable side, and the encoded bytes to be read from its readable side.
+
+### `constructor`
+
+Creates a new `TextEncoderStream` instance with an optional `encoding` standard
+and `options` to configure the underlying `TextEncoder` instance.
+
+#### Signature
+
+```ts ignore
+new TextEncoderStream();
 ```
 
-#### Properties
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
 
-##### `encoding: string`
+### Properties
 
-The encoding used by the underlying decoder.
+#### `encoding: string` <sup>[📚 MDN][textencoderstreamencoding-mdn]</sup>
 
-##### `readable: ReadableStream<string>`
+The encoding used by the underlying encoder. Represents the value passed to the
+constructor as the `encoding` parameter.
 
-The readable stream of decoded strings.
+#### `readable: ReadableStream<Uint8Array>` <sup>[📚 MDN][textencoderstreamreadable-mdn]</sup>
 
-##### `writable: WritableStream<BufferSource>`
+The _output_ side of the duplex stream, from which encoded chunks are read.
 
-The writable stream to which UTF-8 bytes can be written for decoding.
+#### `writable: WritableStream<string>` <sup>[📚 MDN][textencoderstreamwritable-mdn]</sup>
+
+The _input_ side of the duplex, into which strings are written.
+
+<br>
+
+> [!IMPORTANT]
+>
+> `TextEncoderStream` requires runtime support for [`TransformStream`].
+
+---
+
+---
+
+## Interfaces and Types
+
+### `TextDecodeOptions`
+
+Options that can be passed to [`TextDecoder.decode`](./#textdecoder.decode).
+
+#### Signature
+
+```ts
+interface TextDecodeOptions {
+  stream?: boolean;
+}
+```
+
+##### `stream`
+
+Boolean flag that indicates the call to `decode` is part of a stream, which
+affects the behavior of the decoder.
+
+When set to `true`, incomplete byte sequences will be buffered internally and
+their errors will be suppressed, allowing the stream to continue processing. The
+next call to `decode` will resume decoding from the buffered bytes.
+
+> [!TIP]
+>
+> It is important to flush any buffered bytes from the `TextDecoder` internal
+> state once the stream is complete. This can be done by calling `decode` with
+> no arguments, as shown in the example below.
+>
+> ```ts
+> import { TextDecoder } from "@nick/utf8";
+>
+> const decoder = new TextDecoder();
+> const stream = new Uint8Array([0xF0, 0x9F, 0x98, 0x8A]);
+>
+> let result = "";
+> for (const chunk of stream) {
+>   result += decoder.decode(chunk, { stream: true });
+> }
+>
+> // Flush any remaining bytes from the internal state.
+> result += decoder.decode();
+> ```
+
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+
+### `TextDecoderOptions`
+
+Options that can be passed to the [`TextDecoder`](#textdecoder) and
+[`TextDecoderStream`](#textdecoderstream) class constructors to configure the
+behavior of the decoder instance.
+
+#### Signature
+
+```ts
+interface TextDecoderOptions {
+  fatal?: boolean;
+  ignoreBOM?: boolean;
+}
+```
+
+##### `fatal`
+
+Boolean flag that indicates whether to throw an error if the input contains
+invalid bytes. The value passed to this option will be exposed as the `fatal`
+property on the decoder instance (read-only).
+
+**Default**: `false`
+
+##### `ignoreBOM`
+
+Instructs the `TextDecoder` to ignore a leading BOM character in the input. The
+value passed to this option will be exposed as the `ignoreBOM` property on the
+decoder instance (read-only).
+
+**Default**: `false`
+
+<br /><div align="center">·<b>·</b>•<b>•</b>•<b>·</b>·</div>
+
+### `TextEncoderEncodeIntoResult` <sup><small>[📚 MDN][textencoderencodeinto-mdn]</small></sup>
+
+The object returned by [`TextEncoder.encodeInto`](./#textencoder.encodeinto),
+containing the number of characters read from the input string and the number of
+bytes written to the output buffer.
+
+#### Signature
+
+```ts
+interface TextEncoderEncodeIntoResult {
+  read: number;
+  written: number;
+}
+```
+
+##### `read`
+
+The number of characters read from the input string.
+
+##### `written`
+
+The number of bytes written to the output buffer.
+
+---
+
+## Polyfill (shim)
+
+This package is **not a polyfill**, but rather a **_[ponyfill]_** that doesn't
+overwrite the native implementation. It provides a drop-in replacement for the
+native APIs, allowing you to use them in environments that don't support them.
+
+That being said, some users and use cases may indeed require a side-effecting
+polyfill that patches the native APIs. For those cases, you can import the
+`./shim` module, which will gracefully patch the native APIs **as needed**.
+
+If the APIs already exist on the global scope, no changes will be made. If the
+`TransformStream` API is not available, the streaming APIs will not be patched.
+
+```ts
+import "@nick/utf8/shim";
+
+// The native APIs are now patched if needed.
+console.log(new TextEncoder().encode("Hello, World!"));
+```
+
+#### Type Definitions and Augmentation
+
+[JSR], the primary distribution channel for this package, does not support type
+augmentation on the global scope. As a result, this package cannot provide an
+"all-in-one" polyfill experience from a single import of the `./shim` module.
+
+If you need type definitions for the patched APIs, or if for some reason you're
+only looking for type definitions alone, the `@nick/utf8/shim.d.ts` module has
+ambient declarations for all of the APIs provided by this package.
+
+```ts
+import type {} from "@nick/utf8/shim.d.ts";
+```
+
+```ts
+/// <reference types="@nick/utf8/shim.d.ts" />
+```
+
+> Deno users will need to include the `.d.ts` extension as seen above. Users of
+> TypeScript in Node.js / Bun environments _might_ be able to omit that in their
+> triple-slash references, but I'm not 100% certain in that regard.
+
+---
+
+## Compatibility
+
+This package is compatible with all modern browsers, Deno, Node.js, Bun, and
+Cloudflare Workers. The streaming APIs require support for the
+[`TransformStream`] interface, which is available in all of the previously
+mentioned environments.
+
+> If you're running in an environment that doesn't support the `TransformStream`
+> interface, you can find a full-featured polyfill for it in [core-js].
+
+[core-js]: https://github.com/zloirock/core-js "A modular standard library for JavaScript."
 
 ---
 
@@ -230,8 +507,16 @@ The implementations in this package are highly optimized for performance. They
 are written in a way that minimizes the number of allocations and copies, and
 they take advantage of the fastest available APIs in the environment.
 
-Take a look at the benchmarks below to see how this package compares to the
-native APIs in Deno:
+Take a look at the benchmarks below for a performance sample comparing this
+package side-by-side with the native APIs in Deno v2.1.2.
+
+> While benchmarks are far from a definitive measure of performance, they're a
+> good indicator of general performance characteristics. The results may vary
+> depending on the environment, machine, workload, and other factors.
+
+<details><summary><b><u>View Benchmarks</u>: <code>@nick/utf8</code></b> <small>vs.</small> <b>Deno v2.1.2</b></summary>
+
+<br>
 
 ```scala
 > deno bench -A --no-check
@@ -278,6 +563,8 @@ summary
      1.37x faster than Native TextEncoderStream
 ```
 
+</details>
+
 ---
 
 <div align="center">
@@ -291,8 +578,25 @@ summary
 [MIT]: https://nick.mit-license.org "MIT © Nicholas Berlette. All rights reserved."
 [Nicholas Berlette]: https://github.com/nberlette "Nicholas Berlette's GitHub Profile"
 [`@nick/utf8`]: https://jsr.io/@nick/utf8 "Blazing fast ponyfills for `TextEncoder`, `TextDecoder`, and more."
-[ponyfill]: https://ponyfill.com "A polyfill that doesn't overwrite the native implementation."
+[ponyfills]: https://ponyfill.com "A polyfill that doesn't overwrite the native implementation."
 [GitHub]: https://github.com/nberlette/utf8#readme "Give me a star on GitHub! :) 🌟"
 [JSR]: https://jsr.io/@nick/utf8 "View on JSR - The JavaScript Registry"
 [NPM]: https://www.npmjs.com/package/@nick/utf8 "View @nberlette/utf8 on NPM"
 [Bugs]: https://github.com/nberlette/utf8/issues "Submit a bug report or feature request"
+
+<!-- mdn links -->
+
+[`TransformStream`]: https://developer.mozilla.org/en-US/docs/Web/API/TransformStream "View MDN reference for the TransformStream API."
+[textdecoderstream-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream "View MDN reference for the TextDecoderStream API."
+[textdecoderstreamencoding-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream/encoding "View MDN reference for the TextDecoderStream.encoding API."
+[textdecoderstreamfatal-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream/fatal "View MDN reference for the TextDecoderStream.fatal API."
+[textdecoderstreamignorebom-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream/ignoreBOM "View MDN reference for the TextDecoderStream.ignoreBOM API."
+[textdecoderstreamreadable-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream/readable "View MDN reference for the TextDecoderStream.readable API."
+[textdecoderstreamwritable-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream/writable "View MDN reference for the TextDecoderStream.writable API."
+[textencoderstream-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoderStream "View MDN reference for the TextEncoderStream API."
+[textencoderstreamencoding-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoderStream/encoding "View MDN reference for the TextEncoderStream.encoding API."
+[textencoderstreamreadable-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoderStream/readable "View MDN reference for the TextEncoderStream.readable API."
+[textencoderstreamwritable-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoderStream/writable "View MDN reference for the TextEncoderStream.writable API."
+[textdecoderdecode-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/decode "View MDN reference for the TextDecoder.decode API."
+[textencoderencodeinto-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encodeInto "View MDN reference for the TextEncoder.encodeInto API."
+[textencoderencode-mdn]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encode "View MDN reference for the TextEncoder.encode API."

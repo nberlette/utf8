@@ -20,7 +20,17 @@ import {
 } from "./_internal.ts";
 
 /**
+ * A BufferSource is a source of bytes, such as an ArrayBuffer, TypedArray,
+ * SharedArrayBuffer, or DataView.
+ *
+ * @category Types
+ */
+export type BufferSource = ArrayBufferLike | ArrayBufferView;
+
+/**
  * Options for the {@linkcode TextDecoder} constructor.
+ *
+ * @category Types
  */
 export interface TextDecoderOptions {
   /**
@@ -36,7 +46,11 @@ export interface TextDecoderOptions {
   ignoreBOM?: boolean;
 }
 
-/** Options for the {@linkcode TextDecoder.decode} method. */
+/**
+ * Options for the {@linkcode TextDecoder.decode} method.
+ *
+ * @category Types
+ */
 export interface TextDecodeOptions {
   /**
    * If true, indicates that the data being decoded is part of a larger stream.
