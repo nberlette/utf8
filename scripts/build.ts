@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
-
 // deno-lint-ignore-file no-explicit-any
+/// <reference lib="deno.ns" />
 
 import * as dnt from "jsr:@deno/dnt@0.41.3";
 import * as fs from "jsr:@std/fs@1.0.6";
@@ -300,7 +300,7 @@ async function main() {
 
     const exports = Object.entries(denoJson.exports).reduce(
       (o, [k, v]) => {
-        v = v.replace(/^\.\//, "").replace(/\.ts$/, "");
+        v = v.replace(/^\.\//, "").replace(/(?:\.d)?\.ts$/, "");
         v = v.replace(/^src\//, "");
         v = v === "mod" ? "index" : v;
         (o as any)[k] = {
@@ -394,7 +394,7 @@ async function main() {
         await outDir.join("script").rename(outDir.join("cjs"));
         $.logStep("🚚 MOVED", "./script -> ./cjs");
 
-        await outDir.rename(finalOutDir.resolve());
+        await outDir.copy(finalOutDir.resolve(), { overwrite: true });
         $.logStep("🚚 MOVED", `[tmp dir] -> ${finalOutDir}`);
       },
     });
