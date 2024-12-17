@@ -1,10 +1,13 @@
+// deno-lint-ignore-file no-explicit-any
 // deno-lint-ignore no-var
 export var undefined: undefined;
 
-declare const global: typeof globalThis;
-declare const root: typeof globalThis;
+declare const global: typeof globalThis | undefined;
+declare const root: typeof globalThis | undefined;
+declare const window: typeof globalThis | undefined;
+declare const self: typeof globalThis | undefined;
 
-const $global: typeof globalThis = (() => {
+export const $global: typeof globalThis = (() => {
   try {
     if (typeof globalThis === "object") return globalThis;
     return (0, eval)("this");
@@ -40,11 +43,6 @@ type UncurryGetter<T, This = void> = T extends { get(): infer R }
   : [This] extends [void] ? UncurryGetter<T, unknown>
   : (thisArg: This) => T;
 
-type UncurrySetter<T, This = void> = T extends { set(value: infer R): void }
-  ? UncurrySetter<R, This>
-  : [This] extends [void] ? UncurrySetter<T, unknown>
-  : (thisArg: This, value: T) => void;
-
 type ToValue<T, K extends PropertyKey, U extends boolean = false> = K extends
   keyof T ? Exclude<T[K], undefined> | ([U] extends [true] ? undefined : never)
   : unknown;
@@ -57,11 +55,11 @@ export type TypedArrayConstructor =
   | Uint16ArrayConstructor
   | Int32ArrayConstructor
   | Uint32ArrayConstructor
-  | Float16ArrayConstructor
   | Float32ArrayConstructor
   | Float64ArrayConstructor
   | BigInt64ArrayConstructor
-  | BigUint64ArrayConstructor;
+  | BigUint64ArrayConstructor
+  | (typeof globalThis extends { Float16Array: infer F } ? F : never);
 
 export type TypedArray = InstanceType<TypedArrayConstructor>;
 
@@ -120,7 +118,6 @@ function lookupGetter<
   return ObjectGetOwnPropertyDescriptor(o, p)?.get ?? (() => undefined);
 }
 
-// deno-lint-ignore no-explicit-any
 function bindAndRename<T extends (this: This, ...a: any) => any, This = void>(
   fn: T,
   thisArg?: This,
@@ -129,6 +126,25 @@ function bindAndRename<T extends (this: This, ...a: any) => any, This = void>(
   const bound = FunctionPrototypeBind(fn, thisArg);
   ObjectDefineProperty(bound, "name", { value: name });
   return bound;
+}
+
+export function gracefulDefine<T extends object, K extends PropertyKey, V>(
+  target: T,
+  key: K,
+  value: V,
+): asserts target is T & { [P in K]: P extends keyof T ? T[P] : V } {
+  if (!(key in target && target[key as K & keyof T] !== value)) {
+    if (typeof value === "function" && typeof key === "string") {
+      // ensure function names are preserved when minified etc.
+      ObjectDefineProperty(value, "name", { value: key });
+    }
+    ObjectDefineProperty(target, key, {
+      value,
+      writable: true,
+      enumerable: false,
+      configurable: true,
+    });
+  }
 }
 
 export const toString = uncurryThis(Object.prototype.toString);
@@ -171,15 +187,14 @@ export const TypedArray: TypedArrayConstructor = ObjectGetPrototypeOf(
 );
 export const TypedArrayPrototype: InstanceType<TypedArrayConstructor> =
   TypedArray?.prototype!;
-export const TypedArrayPrototypeGetToStringTag = uncurryGetter(
-  TypedArrayPrototype,
-  Symbol.toStringTag,
-);
+export const TypedArrayPrototypeGetToStringTag: {
+  (target: unknown): TypedArrayToStringTag | undefined;
+} = uncurryGetter(TypedArrayPrototype, Symbol.toStringTag) as any;
+
 export const TypedArrayPrototypeSubarray: Uncurry<
   typeof TypedArrayPrototype.subarray,
   typeof TypedArrayPrototype
-> // deno-lint-ignore no-explicit-any
- = uncurryThis(TypedArrayPrototype.subarray as any) as any;
+> = uncurryThis(TypedArrayPrototype.subarray as any) as any;
 
 export const String: typeof globalThis.String = $global.String;
 export const StringFromCharCode: typeof String.fromCharCode =
@@ -215,7 +230,11 @@ export const PromiseResolve = bindAndRename(Promise.resolve, Promise);
 export const PromiseReject = bindAndRename(Promise.reject, Promise);
 
 export const TransformStream: typeof globalThis.TransformStream =
-  $global.TransformStream;
+  $global.TransformStream || function TransformStream() {
+    throw new TypeError("TransformStream is not supported in this environment");
+  };
+
+export type BufferSource = ArrayBufferLike | ArrayBufferView;
 
 export function getCodePoint(input: string, index: number): number {
   const first = StringPrototypeCharCodeAt(input, index);
