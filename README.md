@@ -4,8 +4,10 @@
 
 ##### Blazing fast [ponyfills] for `TextEncoder`, `TextDecoder`, and more.
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nberlette/utf8/ci.yml?style=flat-square)
-![GitHub package.json version](https://img.shields.io/npm/v/nberlette/utf8?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nberlette/utf8/ci.yml)
+![GitHub package.json version](https://img.shields.io/npm/v/@nberlette/utf8)
+![JSR Latest Version](https://jsr.io/badges/@nick/utf8)
+![JSR Package Score](https://jsr.io/badges/@nick/utf8/score)
 
 </div>
 
@@ -14,12 +16,12 @@
 This package provides dependency-free TypeScript implementations of the native
 text encoding classes, designed as [ponyfills] for the following standard APIs.
 
-| API                                           | Description                                | Notes                           |
-| --------------------------------------------- | ------------------------------------------ | ------------------------------- |
-| [`TextEncoder`](#textencoder)                 | Encodes strings into UTF-8 byte sequences. | `--`                            |
-| [`TextDecoder`](#textdecoder)                 | Decodes UTF-8 byte sequences into strings. | Currently only supports UTF-8.  |
-| [`TextEncoderStream`](#textencoderstream-mdn) | Full-duplex text-to-bytes encoding stream. | Requires `TransformStream` API. |
-| [`TextDecoderStream`](#textdecoderstream-mdn) | Full-duplex bytes-to-text decoding stream. | Requires `TransformStream` API. |
+| API                                       | Description                                | Notes                           |
+| ----------------------------------------- | ------------------------------------------ | ------------------------------- |
+| [`TextEncoder`](#textencoder)             | Encodes strings into UTF-8 byte sequences. | `--`                            |
+| [`TextDecoder`](#textdecoder)             | Decodes UTF-8 byte sequences into strings. | Currently only supports UTF-8.  |
+| [`TextEncoderStream`](#textencoderstream) | Full-duplex text-to-bytes encoding stream. | Requires `TransformStream` API. |
+| [`TextDecoderStream`](#textdecoderstream) | Full-duplex bytes-to-text decoding stream. | Requires `TransformStream` API. |
 
 [^1]: Requires the `TransformStream` API to be available in the environment.
 
