@@ -1,6 +1,4 @@
 // deno-lint-ignore-file no-var
-/// <reference no-default-lib="true" />
-/// <reference lib="es2015" />
 
 /**
  * Global type definitions for the `TextDecoder` and `TextEncoder` classes,

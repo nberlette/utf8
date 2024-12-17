@@ -1,8 +1,3 @@
-/// <reference lib="deno.web" />
-/// <reference types="./shim.d.ts" />
-
-import type {} from "./shim.d.ts";
-
 /**
  * This module provides a shim (polyfill) for the native `TextEncoder` and
  * `TextDecoder` APIs, as well as `TextEncoderStream` and `TextDecoderStream`.
@@ -50,11 +45,19 @@ import { TextDecoderStream, TextEncoderStream } from "./streams.ts";
 
 import { $global, gracefulDefine } from "./_internal.ts";
 
-gracefulDefine($global, "TextEncoder", TextEncoder);
-gracefulDefine($global, "TextDecoder", TextDecoder);
+const $globalThis = $global as typeof globalThis & {
+  TextEncoder?: typeof TextEncoder;
+  TextDecoder?: typeof TextDecoder;
+  TextEncoderStream?: typeof TextEncoderStream;
+  TextDecoderStream?: typeof TextDecoderStream;
+  TransformStream?: unknown;
+}
+
+gracefulDefine($globalThis, "TextEncoder", TextEncoder);
+gracefulDefine($globalThis, "TextDecoder", TextDecoder);
 
 // only add the streams APIs if TransformStream is available.
-if (typeof $global.TransformStream === "function") {
-  gracefulDefine($global, "TextEncoderStream", TextEncoderStream);
-  gracefulDefine($global, "TextDecoderStream", TextDecoderStream);
+if (typeof $globalThis.TransformStream === "function") {
+  gracefulDefine($globalThis, "TextEncoderStream", TextEncoderStream);
+  gracefulDefine($globalThis, "TextDecoderStream", TextDecoderStream);
 }
