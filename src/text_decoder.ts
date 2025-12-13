@@ -73,7 +73,7 @@ export class TextDecoder {
   readonly #fatal: boolean;
   readonly #ignoreBOM: boolean;
 
-  #buffer = new Uint8Array(0);
+  #buffer: Uint8Array<ArrayBufferLike> = new Uint8Array(0);
 
   /**
    * Creates a new TextDecoder instance.
