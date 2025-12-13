@@ -1,6 +1,6 @@
 {
   "name": "@nick/utf8",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "license": "MIT",
   "author": {
     "name": "Nicholas Berlette",
@@ -27,6 +27,11 @@
     "test": "deno test -A --no-check=remote --parallel",
     "fix": "deno fmt && deno lint --fix",
     "ok": "deno fmt --check && deno lint && deno run test"
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["no-import-prefix"]
+    }
   },
   "lock": false,
   "nodeModulesDir": "auto",

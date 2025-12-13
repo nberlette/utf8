@@ -186,7 +186,7 @@ export const TypedArray: TypedArrayConstructor = ObjectGetPrototypeOf(
   Uint8Array,
 );
 export const TypedArrayPrototype: InstanceType<TypedArrayConstructor> =
-  TypedArray?.prototype!;
+  TypedArray?.prototype! as InstanceType<TypedArrayConstructor>;
 export const TypedArrayPrototypeGetToStringTag: {
   (target: unknown): TypedArrayToStringTag | undefined;
 } = uncurryGetter(TypedArrayPrototype, Symbol.toStringTag) as any;
@@ -274,7 +274,7 @@ export function toUint8Array(input?: BufferSource | null): Uint8Array {
       return new Uint8Array(input);
     } catch (_) {
       try {
-        ArrayBufferPrototypeGetByteLength(input);
+        ArrayBufferPrototypeGetByteLength(input as ArrayBuffer);
         return new Uint8Array(input);
       } catch (_) {
         throw new TypeError(

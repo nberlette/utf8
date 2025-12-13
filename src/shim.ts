@@ -39,6 +39,8 @@
  * ```
  * @module shim
  */
+import type {} from "./shim.d.ts";
+
 import { TextEncoder } from "./text_encoder.ts";
 import { TextDecoder } from "./text_decoder.ts";
 import { TextDecoderStream, TextEncoderStream } from "./streams.ts";
