@@ -28,6 +28,11 @@
     "fix": "deno fmt && deno lint --fix",
     "ok": "deno fmt --check && deno lint && deno run test"
   },
+  "lint": {
+    "rules": {
+      "exclude": ["no-import-prefix"]
+    }
+  },
   "lock": false,
   "nodeModulesDir": "auto",
   "publish": {
