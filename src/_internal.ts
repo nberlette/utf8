@@ -184,8 +184,8 @@ export const Uint8ArrayPrototypeSubarray: Uncurry<
 export const TypedArray: TypedArrayConstructor = ObjectGetPrototypeOf(
   Uint8Array,
 );
-export const TypedArrayPrototype: TypedArray =
-  TypedArray?.prototype! as TypedArray;
+export const TypedArrayPrototype: TypedArray = TypedArray
+  ?.prototype! as TypedArray;
 export const TypedArrayPrototypeGetToStringTag: {
   (target: unknown): TypedArrayToStringTag | undefined;
 } = uncurryGetter(TypedArrayPrototype, Symbol.toStringTag) as any;
