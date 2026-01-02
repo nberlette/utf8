@@ -1,25 +1,20 @@
-// deno-lint-ignore-file no-explicit-any
-// deno-lint-ignore no-var
+// deno-lint-ignore-file no-explicit-any no-var
 export var undefined: undefined;
 
-declare const global: typeof globalThis | undefined;
-declare const root: typeof globalThis | undefined;
-declare const window: typeof globalThis | undefined;
-declare const self: typeof globalThis | undefined;
+declare var global: typeof globalThis | undefined;
+declare var root: typeof globalThis | undefined;
+declare var window: typeof globalThis | undefined;
+declare var self: typeof globalThis | undefined;
 
 export const $global: typeof globalThis = (() => {
-  try {
-    if (typeof globalThis === "object") return globalThis;
-    return (0, eval)("this");
-  } catch {
-    if (typeof window === "object") return window;
-    if (typeof self === "object") return self;
-    if (typeof global === "object") return global;
-    if (typeof root === "object") return root;
-    if (typeof this === "object") return this;
-    // ewww
-    throw "Unable to locate global `this`";
-  }
+  if (typeof globalThis === "object") return globalThis;
+  if (typeof window === "object") return window;
+  if (typeof self === "object") return self;
+  if (typeof global === "object") return global;
+  if (typeof root === "object") return root;
+  if (typeof this === "object") return this;
+  // ewww
+  return (0, eval)("this");
 })();
 
 type UncurryThis = {
@@ -168,7 +163,11 @@ export const ArrayBufferPrototypeGetByteLength = uncurryGetter(
 export const SharedArrayBuffer: typeof globalThis.SharedArrayBuffer =
   $global.SharedArrayBuffer;
 export const SharedArrayBufferPrototypeGetByteLength = uncurryGetter(
-  SharedArrayBuffer.prototype,
+  SharedArrayBuffer?.prototype || {
+    get byteLength() {
+      throw new TypeError("SharedArrayBuffer is not supported.");
+    },
+  } as unknown as SharedArrayBuffer,
   "byteLength",
 );
 
@@ -185,8 +184,8 @@ export const Uint8ArrayPrototypeSubarray: Uncurry<
 export const TypedArray: TypedArrayConstructor = ObjectGetPrototypeOf(
   Uint8Array,
 );
-export const TypedArrayPrototype: InstanceType<TypedArrayConstructor> =
-  TypedArray?.prototype! as InstanceType<TypedArrayConstructor>;
+export const TypedArrayPrototype: TypedArray =
+  TypedArray?.prototype! as TypedArray;
 export const TypedArrayPrototypeGetToStringTag: {
   (target: unknown): TypedArrayToStringTag | undefined;
 } = uncurryGetter(TypedArrayPrototype, Symbol.toStringTag) as any;
@@ -270,11 +269,11 @@ export function toUint8Array(input?: BufferSource | null): Uint8Array {
     return new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
   } else {
     try {
-      SharedArrayBufferPrototypeGetByteLength(input as SharedArrayBuffer);
+      ArrayBufferPrototypeGetByteLength(input as ArrayBuffer);
       return new Uint8Array(input);
     } catch (_) {
       try {
-        ArrayBufferPrototypeGetByteLength(input as ArrayBuffer);
+        SharedArrayBufferPrototypeGetByteLength(input as SharedArrayBuffer);
         return new Uint8Array(input);
       } catch (_) {
         throw new TypeError(
